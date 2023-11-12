@@ -6,8 +6,6 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.text.format.DateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,9 +24,10 @@ import androidx.navigation.fragment.navArgs
 import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
-const val DATE_FORMAT = "EEE, MMM, dd, HH:mm:ss, zzz , yyyy"
+const val DATE_FORMAT = "EEE MMM dd HH:mm:ss z yyyy"
 
 class CrimeDetailFragment : Fragment() {
 
@@ -147,8 +146,7 @@ class CrimeDetailFragment : Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            val f = getLocalizedDate(crime.date.toString())
-            crimeDate.text = DateFormat.format(f, crime.date).toString()
+            crimeDate.text = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(crime.date)
             crimeDate.setOnClickListener {
                 findNavController().navigate(
                     CrimeDetailFragmentDirections.selectDate(crime.date)
@@ -181,23 +179,13 @@ class CrimeDetailFragment : Fragment() {
         }
     }
 
-    private fun getLocalizedDate(date : String) : String {
-        val df = DateFormat.getBestDateTimePattern(Locale.getDefault(), DATE_FORMAT)
-
-        return df.format(date)
-    }
-
-
     private fun getCrimeReport(crime: Crime): String {
         val solvedString = if (crime.isSolved) {
             getString(R.string.crime_report_solved)
         } else {
             getString(R.string.crime_report_unsolved)
         }
-
-        val f = getLocalizedDate(crime.date.toString())
-        val dateString = DateFormat.format(f, crime.date).toString()
-//        Log.d("format: ",dateString);
+        val dateString = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(crime.date)
 
         val suspectText = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
