@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +26,9 @@ import androidx.navigation.fragment.navArgs
 import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Date
+import java.util.*
 
-private const val DATE_FORMAT = "EEE, MMM, dd"
+const val DATE_FORMAT = "EEE, MMM, dd, HH:mm:ss, zZZZZ , yyyy"
 
 class CrimeDetailFragment : Fragment() {
 
@@ -146,7 +147,8 @@ class CrimeDetailFragment : Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = crime.date.toString()
+            val f = getLocalizedDate(crime.date.toString())
+            crimeDate.text = DateFormat.format(f, crime.date).toString()
             crimeDate.setOnClickListener {
                 findNavController().navigate(
                     CrimeDetailFragmentDirections.selectDate(crime.date)
@@ -179,6 +181,13 @@ class CrimeDetailFragment : Fragment() {
         }
     }
 
+    private fun getLocalizedDate(date : String) : String {
+        val df = DateFormat.getBestDateTimePattern(Locale.getDefault(), DATE_FORMAT)
+
+        return df.format(date)
+    }
+
+
     private fun getCrimeReport(crime: Crime): String {
         val solvedString = if (crime.isSolved) {
             getString(R.string.crime_report_solved)
@@ -186,7 +195,10 @@ class CrimeDetailFragment : Fragment() {
             getString(R.string.crime_report_unsolved)
         }
 
-        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+        val f = getLocalizedDate(crime.date.toString())
+        val dateString = DateFormat.format(f, crime.date).toString()
+//        Log.d("format: ",dateString);
+
         val suspectText = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
