@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
-const val DATE_FORMAT = "EEE, MMM, dd, HH:mm:ss, zZZZZ , yyyy"
+const val DATE_FORMAT = "EEE, MMM, dd, HH:mm:ss, zzz , yyyy"
 
 class CrimeDetailFragment : Fragment() {
 
